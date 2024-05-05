@@ -29,8 +29,8 @@ class Board:
     # evaluate current position
     def evaluate(self):
         # Constants for piece and king values
-        piece_value = 1 # importance of piece
-        king_value = 3 # importance of king
+        piece_value = 1 # Importance of piece
+        king_value = 3 # Importance of king
         
         evaluation = 0
         
@@ -56,8 +56,8 @@ class Board:
         evaluation += (white_mobility - red_mobility) * 0.1 # 0.1 is the importance of mobility on evaluation
         
         # Evaluate king safety (kings positioned on the edges are safer)
-        white_king_safety = sum(1 for piece in self.get_all_pieces(WHITE) if piece.king and (piece.row == 0 or piece.row == ROWS - 1))
-        red_king_safety = sum(1 for piece in self.get_all_pieces(RED) if piece.king and (piece.row == 0 or piece.row == ROWS - 1))
+        white_king_safety = sum(1 for piece in self.get_all_pieces(WHITE) if piece.king and (piece.row == 0 or piece.row == ROWS - 1 or piece.row == 1 or piece.row == ROWS - 2))
+        red_king_safety = sum(1 for piece in self.get_all_pieces(RED) if piece.king and (piece.row == 0 or piece.row == ROWS - 1 or piece.row == 1 or piece.row == ROWS - 2))
         evaluation += (white_king_safety - red_king_safety) * 0.5
         
         # Evaluate control of the center
@@ -70,7 +70,7 @@ class Board:
                         center_control += piece_value
                     else:
                         center_control -= piece_value
-        evaluation += center_control * 0.2
+        evaluation += center_control * 0.3
         
         #return self.white_left - self.red_left + (self.white_kings * 0.5 - self.red_kings * 0.5)
         return evaluation
