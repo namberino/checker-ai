@@ -23,7 +23,7 @@ def main():
         clock.tick(FPS)
 
         if game.turn != RED:
-            value, new_board = minimax(game.get_board(), 5, WHITE, float('-inf'), float('inf'), game)
+            value, new_board = minimax(game.get_board(), 4, WHITE, float('-inf'), float('inf'), game)
             if new_board == None:
                 print("No possible move found")
             #print(value)

@@ -1,6 +1,7 @@
 import pygame
 from .constants import BLACK, ROWS, RED, SQUARE_SIZE, COLS, WHITE
 from .piece import Piece
+from copy import deepcopy
 
 class Board:
     def __init__(self):
@@ -27,7 +28,55 @@ class Board:
 
     # evaluate current position
     def evaluate(self):
-        return self.white_left - self.red_left + (self.white_kings * 0.5 - self.red_kings * 0.5)
+        # Constants for piece and king values
+        piece_value = 1
+        king_value = 3
+        
+        # Initialize evaluation
+        evaluation = 0
+        
+        # Evaluate piece count
+        evaluation += (self.white_left - self.red_left) * piece_value
+        
+        # Evaluate king count
+        evaluation += (self.white_kings - self.red_kings) * king_value
+        
+        # Evaluate piece positioning
+        for row in range(ROWS):
+            for col in range(COLS):
+                piece = self.board[row][col]
+                if piece != 0:
+                    if piece.color == WHITE:
+                        evaluation += piece_value * (ROWS - row)  # Reward advancement for white pieces
+                    else:
+                        evaluation -= piece_value * row  # Penalize retreat for red pieces
+        
+        # Evaluate mobility
+        white_mobility = sum(len(self.get_valid_moves(piece)) for piece in self.get_all_pieces(WHITE))
+        red_mobility = sum(len(self.get_valid_moves(piece)) for piece in self.get_all_pieces(RED))
+        evaluation += (white_mobility - red_mobility) * 0.1
+        
+        # Evaluate king safety
+        white_king_safety = sum(1 for piece in self.get_all_pieces(WHITE) if piece.king and (piece.row == 0 or piece.row == ROWS - 1))
+        red_king_safety = sum(1 for piece in self.get_all_pieces(RED) if piece.king and (piece.row == 0 or piece.row == ROWS - 1))
+        evaluation += (white_king_safety - red_king_safety) * 0.5
+        
+        # Evaluate control of the center
+        center_control = 0
+        for row in range(2, 6):  # Central rows
+            for col in range(2 if row % 2 == 0 else 1, COLS, 2):
+                piece = self.board[row][col]
+                if piece != 0:
+                    if piece.color == WHITE:
+                        center_control += piece_value
+                    else:
+                        center_control -= piece_value
+        evaluation += center_control * 0.2
+        
+        return evaluation
+
+
+        #return self.white_left - self.red_left + (self.white_kings * 0.5 - self.red_kings * 0.5)
 
     def move(self, piece, row, col):
         self.board[piece.row][piece.col], self.board[row][col] = self.board[row][col], self.board[piece.row][piece.col]
