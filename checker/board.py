@@ -29,10 +29,9 @@ class Board:
     # evaluate current position
     def evaluate(self):
         # Constants for piece and king values
-        piece_value = 1
-        king_value = 3
+        piece_value = 1 # importance of piece
+        king_value = 3 # importance of king
         
-        # Initialize evaluation
         evaluation = 0
         
         # Evaluate piece count
@@ -45,26 +44,26 @@ class Board:
         for row in range(ROWS):
             for col in range(COLS):
                 piece = self.board[row][col]
-                if piece != 0:
+                if piece != 0: # if there's a piece
                     if piece.color == WHITE:
-                        evaluation += piece_value * (ROWS - row)  # Reward advancement for white pieces
+                        evaluation += piece_value * (ROWS - row)  # reward advancement for white pieces
                     else:
-                        evaluation -= piece_value * row  # Penalize retreat for red pieces
+                        evaluation -= piece_value * (ROWS - row)  # penalize for white pieces allowing red pieces to advance
         
-        # Evaluate mobility
+        # Evaluate mobility (add sum of number of valid moves of all pieces)
         white_mobility = sum(len(self.get_valid_moves(piece)) for piece in self.get_all_pieces(WHITE))
         red_mobility = sum(len(self.get_valid_moves(piece)) for piece in self.get_all_pieces(RED))
-        evaluation += (white_mobility - red_mobility) * 0.1
+        evaluation += (white_mobility - red_mobility) * 0.1 # 0.1 is the importance of mobility on evaluation
         
-        # Evaluate king safety
+        # Evaluate king safety (kings positioned on the edges are safer)
         white_king_safety = sum(1 for piece in self.get_all_pieces(WHITE) if piece.king and (piece.row == 0 or piece.row == ROWS - 1))
         red_king_safety = sum(1 for piece in self.get_all_pieces(RED) if piece.king and (piece.row == 0 or piece.row == ROWS - 1))
         evaluation += (white_king_safety - red_king_safety) * 0.5
         
         # Evaluate control of the center
         center_control = 0
-        for row in range(2, 6):  # Central rows
-            for col in range(2 if row % 2 == 0 else 1, COLS, 2):
+        for row in range(2, 6): # Central rows
+            for col in range(2 if row % 2 == 0 else 1, COLS, 2): # Each columns based on whether current row is odd or not
                 piece = self.board[row][col]
                 if piece != 0:
                     if piece.color == WHITE:
@@ -73,10 +72,8 @@ class Board:
                         center_control -= piece_value
         evaluation += center_control * 0.2
         
-        return evaluation
-
-
         #return self.white_left - self.red_left + (self.white_kings * 0.5 - self.red_kings * 0.5)
+        return evaluation
 
     def move(self, piece, row, col):
         self.board[piece.row][piece.col], self.board[row][col] = self.board[row][col], self.board[piece.row][piece.col]
