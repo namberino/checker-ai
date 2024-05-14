@@ -5,7 +5,7 @@ from copy import deepcopy
 
 class Board:
     def __init__(self):
-        self.board = []
+        self.board = [] # 2d array representing pieces on the board
         self.red_left = self.white_left = 12
         self.red_kings = self.white_kings = 0
         self.create_board()
@@ -53,12 +53,12 @@ class Board:
         # Evaluate mobility (add sum of number of valid moves of all pieces)
         white_mobility = sum(len(self.get_valid_moves(piece)) for piece in self.get_all_pieces(WHITE))
         red_mobility = sum(len(self.get_valid_moves(piece)) for piece in self.get_all_pieces(RED))
-        evaluation += (white_mobility - red_mobility) * 0.1 # 0.1 is the importance of mobility on evaluation
+        evaluation += (white_mobility - red_mobility) * 0.5 # 0.5 is the importance of mobility on evaluation
         
         # Evaluate king safety (kings positioned on the edges are safer)
         white_king_safety = sum(1 for piece in self.get_all_pieces(WHITE) if piece.king and (piece.row == 0 or piece.row == ROWS - 1 or piece.row == 1 or piece.row == ROWS - 2))
         red_king_safety = sum(1 for piece in self.get_all_pieces(RED) if piece.king and (piece.row == 0 or piece.row == ROWS - 1 or piece.row == 1 or piece.row == ROWS - 2))
-        evaluation += (white_king_safety - red_king_safety) * 0.5
+        evaluation += (white_king_safety - red_king_safety) * 0.2
         
         # Evaluate control of the center
         center_control = 0
@@ -139,6 +139,7 @@ class Board:
         right = piece.col + 1
         row = piece.row
 
+        # max(row - 3, -1) and min(row + 3, ROWS) ensures the piece doesn't go off the board
         if piece.color == RED or piece.king:
             moves.update(self._traverse_left(row - 1, max(row - 3, -1), -1, piece.color, left))
             moves.update(self._traverse_right(row - 1, max(row - 3, -1), -1, piece.color, right))
@@ -157,6 +158,10 @@ class Board:
                     
         return False
 
+    '''
+    start: starting row
+    stop: 
+    '''
     def _traverse_left(self, start, stop, step, color, left, skipped=[]):
         moves = {}
         last = []
