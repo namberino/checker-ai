@@ -23,9 +23,6 @@ def minimax(position, depth, max_player, alpha, beta, game):
             alpha = max(alpha, max_eval)
             if beta <= alpha:
                 break
- 
-            # if max_eval == child_eval:
-            #     best_position = move
 
         return max_eval, best_position
     
@@ -42,9 +39,6 @@ def minimax(position, depth, max_player, alpha, beta, game):
             beta = min(beta, min_eval)
             if beta <= alpha:
                 break
-
-            # if min_eval == child_eval:
-            #     best_position = move
 
         return min_eval, best_position
 
