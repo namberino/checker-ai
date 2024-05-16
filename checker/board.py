@@ -53,7 +53,7 @@ class Board:
         # Evaluate mobility (add sum of number of valid moves of all pieces)
         white_mobility = sum(len(self.get_valid_moves(piece)) for piece in self.get_all_pieces(WHITE))
         red_mobility = sum(len(self.get_valid_moves(piece)) for piece in self.get_all_pieces(RED))
-        evaluation += (white_mobility - red_mobility) * 0.5 # 0.5 is the importance of mobility on evaluation
+        evaluation += (white_mobility - red_mobility) * 0.3 # 0.3 is the importance of mobility on evaluation
         
         # Evaluate king safety (kings positioned on the edges are safer)
         white_king_safety = sum(1 for piece in self.get_all_pieces(WHITE) if piece.king and (piece.row == 0 or piece.row == ROWS - 1 or piece.row == 1 or piece.row == ROWS - 2))
@@ -70,7 +70,7 @@ class Board:
                         center_control += piece_value
                     else:
                         center_control -= piece_value
-        evaluation += center_control * 0.3
+        evaluation += center_control * 0.5
         
         return evaluation
 
