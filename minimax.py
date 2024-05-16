@@ -52,7 +52,7 @@ def get_all_moves(board, color, game):
         # valid_moves = dictionary = (row, col): [pieces]
         # if we move the pieces to this position, we need to remove the [pieces]
         for move, skip in valid_moves.items():
-            #draw_moves(game, board, piece)
+            draw_moves(game, board, piece)
             
             tmp_board = deepcopy(board) # deep copy to modify the board to see what the new position will look like (deepcopy won't modify the original board)
             tmp_piece = tmp_board.get_piece(piece.row, piece.col) # get new piece associated with tmp_board
@@ -72,7 +72,7 @@ def draw_moves(game, board, piece):
     game.draw_valid_moves(valid_moves.keys())
     pygame.display.update()
 
-    pygame.time.delay(30)
+    pygame.time.delay(5)
 
 
 def simulate_move(board, piece, move, skip):
