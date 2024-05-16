@@ -72,7 +72,6 @@ class Board:
                         center_control -= piece_value
         evaluation += center_control * 0.3
         
-        #return self.white_left - self.red_left + (self.white_kings * 0.5 - self.red_kings * 0.5)
         return evaluation
 
     def move(self, piece, row, col):
